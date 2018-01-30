@@ -38,49 +38,68 @@ class webserverHandler(BaseHTTPRequestHandler):
 	 	self.send_header('content-type','text/html')
 	 	self.end_headers()
 
-	 	restaurants = session.query(Restaurant).all()
+	 	if self.path.endswith("/home"):
+	 		restaurants = session.query(Restaurant).all()
 
-	 	output = "<html><body>"
-	 	output += "<header>"
-	 	output += "<h1>Restaurant Project</h1>"
-	 	output += "<h2><a href='/addmore'>Add a restaurant</a><h2>"
-	 	output += "</header>"
-	 	for restaurant in restaurants:
-	 		output += "<section>"
-	 		output += "<h2>%s<h2>"%restaurant.name
-			output += "<a href='#''>Edit</a>"
-			output += "<a href='#''>Delete</a>"
-			output += "</section>"
-	 		output += """<style>
-	 				header {
-	 					text-align: center;
-	 					margin-bottom: 5%;}
+	 		output = "<html><body>"
+	 		output += "<header>"
+		 	output += "<h1>Restaurant Project</h1>"
+		 	output += "<h2><a href='/addmore'>Add a restaurant</a><h2>"
+		 	output += "</header>"
+		 	for restaurant in restaurants:
+		 		output += "<section>"
+		 		output += "<h2>%s<h2>"%restaurant.name
+				output += "<a href='#''>Edit</a>"
+				output += "<a href='#''>Delete</a>"
+				output += "</section>"
+		 		output += """<style>
+		 				header {
+		 					text-align: center;
+		 					margin-bottom: 5%;}
 
 
-	 				body {background: #a7a7a7;}
+		 				body {background: #a7a7a7;}
 
-	 				a {font-size:0.75em;}
+		 				a {font-size:0.75em;}
 
-	 				section {border-bottom: solid blue 2px;
-	 				 		  margin-left: 5%;
-	 				 		  margin-right: 5%;}
+		 				section {border-bottom: solid blue 2px;
+		 				 		  margin-left: 5%;
+		 				 		  margin-right: 5%;}
 
-	 				section a {margin-right: 2.5%;}
-
-	 				 
-	 				</style>"""
-	 	self.wfile.write(output) 
+		 				section a {margin-right: 2.5%;}
+		 				</style>"""
+		 	self.wfile.write(output) 
 
 	 	if self.path.endswith("/addmore"):
-	 		output_new = " "
-	 		output_new += "<html><body>"
-	 		output_new += "<h1>What's name of the new restaurant?</h1>"
-	 		output_new += """<form method='POST' enctype='multipart/form-data'  action='/hello'>
-	 					<input name='Name' type='text'>
+	 		output = " "
+	 		output += "<html><body>"
+	 		output += "<header>"
+		 	output += "<h1>Restaurant Project</h1>"
+		 	output += "</header>"
+	 		output += "<h3>What's name of the new restaurant?</h3>"
+	 		output += """<form method='POST' enctype='multipart/form-data'  action='/addmore'>
+	 					<input name='name' type='text'>
 	 					<input type='submit' value='Submit'>
 	 					</form>"""
-	 		output_new += "</html></body>"
-	 		self.wfile.write(output_new)
+
+		 	output += """<style>
+		 				header {
+		 					text-align: center;
+		 					margin-bottom: 5%;}
+
+
+		 				body {background: #a7a7a7;}
+
+		 				a {font-size:0.75em;}
+
+		 				h3, form {margin-left: 5%;
+		 				 	margin-right: 5%;}
+
+		 				 
+		 				</style>"""
+
+	 		
+	 		self.wfile.write(output)
 
 	 	return	
 	
@@ -89,8 +108,46 @@ class webserverHandler(BaseHTTPRequestHandler):
 	 	self.send_header('content-type','text/html')
 	 	self.end_headers()
 
-	 	output = "<h1>POST FUNCTION RESPONDING</h1>"
-	 	self.wfile.write(output)
+		ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+
+	 	if ctype == 'multipart/form-data':
+	 		fields = cgi.parse_multipart(self.rfile, pdict)
+	 		messagecontent = fields.get('name')
+	 		new_restaurant = Restaurant(name = messagecontent[0])
+	 		session.add(new_restaurant)
+	 		session.commit()
+
+			output = ""
+	 		output += "<html><body>"
+	 		output += "<header>"
+		 	output += "<h1>Restaurant Project</h1>"
+		 	output += "</header>"
+	 		output += "<h3>What's name of the new restaurant?</h3>"
+	 		output += """<form method='POST' enctype='multipart/form-data'  action='/addmore'>
+	 					<input name='name' type='text'>
+	 					<input type='submit' value='Submit'>
+	 					</form>"""
+			output += "<h3>Thank you!</h3>"
+	 		output += "<h4>Please click <a href='/home'>here</a> to return back</h4>"
+	 		output += "</html></body>"
+	 		output += """<style>
+		 				header {
+		 					text-align: center;
+		 					margin-bottom: 5%;}
+
+
+		 				body {background: #a7a7a7;}
+
+		 				a {font-size:0.75em;}
+
+		 				h3, h4, form {margin-left: 5%;
+		 				 	margin-right: 5%;}
+
+		 				 
+		 				</style>"""
+	 		self.wfile.write(output)
+
+
 
 		return
 
