@@ -69,7 +69,7 @@ class webserverHandler(BaseHTTPRequestHandler):
 
 	 				 
 	 				</style>"""
-	 	self.wfile.write(output)
+	 	self.wfile.write(output) 
 
 	 	if self.path.endswith("/addmore"):
 	 		output_new = " "
