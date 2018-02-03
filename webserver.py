@@ -49,8 +49,12 @@ class webserverHandler(BaseHTTPRequestHandler):
 		 	for restaurant in restaurants:
 		 		output += "<section>"
 		 		output += "<h2>%s<h2>"%restaurant.name
-				output += "<a href='#''>Edit</a>"
-				output += "<a href='#''>Delete</a>"
+				#output += "<a href='#''>Edit</a>"
+				#output += "<a href='#''>Delete</a>"
+				output += """<form method='POST' enctype='multipart/form-data'  action='/edit'>
+	 					<input type='submit' value='Edit'></form>
+	 					<form method='POST' enctype='multipart/form-data'  action='/delete'>
+	 					<input type='submit' value='Delete'></form>"""
 				output += "</section>"
 		 		output += """<style>
 		 				header {
@@ -66,7 +70,7 @@ class webserverHandler(BaseHTTPRequestHandler):
 		 				 		  margin-left: 5%;
 		 				 		  margin-right: 5%;}
 
-		 				section a {margin-right: 2.5%;}
+		 				section a {margin-right: 2.5%;`}
 		 				</style>"""
 		 	self.wfile.write(output) 
 
@@ -79,7 +83,7 @@ class webserverHandler(BaseHTTPRequestHandler):
 	 		output += "<h3>What's name of the new restaurant?</h3>"
 	 		output += """<form method='POST' enctype='multipart/form-data'  action='/addmore'>
 	 					<input name='name' type='text'>
-	 					<input type='submit' value='Submit'>
+	 					<input type='submit' value='Add'>
 	 					</form>"""
 
 		 	output += """<style>
@@ -94,11 +98,8 @@ class webserverHandler(BaseHTTPRequestHandler):
 
 		 				h3, form {margin-left: 5%;
 		 				 	margin-right: 5%;}
-
-		 				 
+						 
 		 				</style>"""
-
-	 		
 	 		self.wfile.write(output)
 
 	 	return	
@@ -109,6 +110,7 @@ class webserverHandler(BaseHTTPRequestHandler):
 	 	self.end_headers()
 
 		ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+		test = cgi.FieldStorage()
 
 	 	if ctype == 'multipart/form-data':
 	 		fields = cgi.parse_multipart(self.rfile, pdict)
@@ -146,8 +148,6 @@ class webserverHandler(BaseHTTPRequestHandler):
 		 				 
 		 				</style>"""
 	 		self.wfile.write(output)
-
-
 
 		return
 
