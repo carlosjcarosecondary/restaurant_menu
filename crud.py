@@ -72,6 +72,7 @@ UrbanVeggierBurger.price = '$2.99'
 session.add(UrbanVeggierBurger)
 
 # 4. Session commi
+session.commit()
 
 #################################################
 # DELETE
